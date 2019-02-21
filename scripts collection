@@ -107,6 +107,58 @@ echo "***********************************************************"
 
 ========================================================================================
 Perl Script to clear out soft and hard errors on Solaris
+
+Usage of the script:
+# chmod 755 iostat-E_reset.pl
+ # ./iostat-E_reset.pl <sd|ssd>  <instance number> <type> [type]...
+Examples:
+
+# ./iostat-E_reset.pl
+Usage: iostat-E_reset.pl <sd|ssd> <instance number> <type> [type]...
+       type values are hard, illrq, media, nodev, ntrdy, pfa recov, soft, and tran,
+       type "all" can be used to reset all of the above
+       type "io" can be used to reset soft, hard, and tran errors
+
+# iostat -e
+           ---- errors --- 
+device  s/w h/w trn tot 
+sd3       0   0   1   1 
+sd4       0   0   0   0 
+sd5       0   0   0   0 
+nfs1      0   0   0   0 
+nfs5      0   0   0   0
+
+# ./iostat-E_reset.pl sd 3 io
+Resetting sd_transerrs    for instance     3, current value 0x1
+Resetting sd_softerrs     for instance     3, current value 0x0
+Resetting sd_harderrs     for instance     3, current value 0x0
+
+# iostat -e 
+           ---- errors --- 
+device  s/w h/w trn tot 
+sd3       0   0   0   0
+sd4       0   0   0   0 
+sd5       0   0   0   0 
+nfs1      0   0   0   0 
+nfs5      0   0   0   0
+# ./iostat-E_reset.pl sd 0 all
+Resetting sd_transerrs    for instance     0, current value 0x4
+Resetting sd_rq_recov_err for instance     0, current value 0x0
+Resetting sd_rq_ntrdy_err for instance     0, current value 0x0
+Resetting sd_rq_media_err for instance     0, current value 0x3
+Resetting sd_softerrs     for instance     0, current value 0x6
+Resetting sd_rq_pfa_err   for instance     0, current value 0x0
+Resetting sd_rq_nodev_err for instance     0, current value 0x0
+Resetting sd_rq_illrq_err for instance     0, current value 0x0
+Resetting sd_harderrs     for instance     0, current value 0x0
+
+# ./iostat-E_reset.pl sd 1 media io pfa
+Resetting sd_softerrs     for instance     1, current value 0x3
+Resetting sd_rq_pfa_err   for instance     1, current value 0x0
+Resetting sd_transerrs    for instance     1, current value 0x2
+Resetting sd_rq_media_err for instance     1, current value 0x1
+Resetting sd_harderrs     for instance     1, current value 0x0
+
 ========================================================================================
 #!/usr/bin/perl
 
